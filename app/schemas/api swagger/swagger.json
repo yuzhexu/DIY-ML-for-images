@@ -1,0 +1,213 @@
+{
+    "swagger": "2.0",
+    "basePath": "/",
+    "paths": {
+        "/projects/{projectId}/analyze": {
+            "parameters": [
+                {
+                    "name": "projectId",
+                    "in": "path",
+                    "required": true,
+                    "type": "integer"
+                }
+            ],
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                },
+                "description": "Analyzes uploaded data to provide insights before training.",
+                "operationId": "get_data_analyze",
+                "tags": [
+                    "projects"
+                ]
+            }
+        },
+        "/projects/{projectId}/images/upload": {
+            "parameters": [
+                {
+                    "name": "file",
+                    "in": "formData",
+                    "type": "array",
+                    "required": true,
+                    "description": "One or more image files.",
+                    "items": {
+                        "type": "file"
+                    },
+                    "collectionFormat": "multi"
+                },
+                {
+                    "name": "projectId",
+                    "in": "path",
+                    "required": true,
+                    "type": "integer"
+                }
+            ],
+            "post": {
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                },
+                "description": "Allows users to upload images for a specific project. The endpoint supports uploading multiple images in one request.",
+                "operationId": "post_image_upload",
+                "consumes": [
+                    "application/x-www-form-urlencoded",
+                    "multipart/form-data"
+                ],
+                "tags": [
+                    "projects"
+                ]
+            }
+        },
+        "/projects/{projectId}/labels/upload": {
+            "parameters": [
+                {
+                    "name": "payload",
+                    "required": true,
+                    "in": "body",
+                    "schema": {
+                        "$ref": "#/definitions/Label"
+                    }
+                },
+                {
+                    "name": "projectId",
+                    "in": "path",
+                    "required": true,
+                    "type": "integer"
+                }
+            ],
+            "post": {
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                },
+                "description": "Uploads label or class data for the images in a specific project.",
+                "operationId": "post_label_upload",
+                "tags": [
+                    "projects"
+                ]
+            }
+        },
+        "/projects/{projectId}/training/configure": {
+            "parameters": [
+                {
+                    "name": "payload",
+                    "required": true,
+                    "in": "body",
+                    "schema": {
+                        "$ref": "#/definitions/TrainingConfig"
+                    }
+                },
+                {
+                    "name": "projectId",
+                    "in": "path",
+                    "required": true,
+                    "type": "integer"
+                }
+            ],
+            "post": {
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                },
+                "description": "Allows users to configure training parameters for a machine learning model.",
+                "operationId": "post_training_configure",
+                "tags": [
+                    "projects"
+                ]
+            }
+        },
+        "/projects/{projectId}/training/start": {
+            "parameters": [
+                {
+                    "name": "projectId",
+                    "in": "path",
+                    "required": true,
+                    "type": "integer"
+                }
+            ],
+            "post": {
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                },
+                "description": "Initiates the training process for a machine learning model with the previously configured parameters.",
+                "operationId": "post_training_start",
+                "tags": [
+                    "projects"
+                ]
+            }
+        }
+    },
+    "info": {
+        "title": "DIY Machine Learning API",
+        "version": "1.0",
+        "description": "A simple DIY Machine Learning API"
+    },
+    "produces": [
+        "application/json"
+    ],
+    "consumes": [
+        "application/json"
+    ],
+    "tags": [
+        {
+            "name": "projects",
+            "description": "Project operations"
+        }
+    ],
+    "definitions": {
+        "Label": {
+            "required": [
+                "imageName",
+                "label"
+            ],
+            "properties": {
+                "imageName": {
+                    "type": "string",
+                    "description": "The image name"
+                },
+                "label": {
+                    "type": "string",
+                    "description": "The label of the image"
+                }
+            },
+            "type": "object"
+        },
+        "TrainingConfig": {
+            "required": [
+                "batchSize",
+                "epochs",
+                "learningRate"
+            ],
+            "properties": {
+                "epochs": {
+                    "type": "integer",
+                    "description": "Number of epochs"
+                },
+                "batchSize": {
+                    "type": "integer",
+                    "description": "Batch size"
+                },
+                "learningRate": {
+                    "type": "number",
+                    "description": "Learning rate"
+                }
+            },
+            "type": "object"
+        }
+    },
+    "responses": {
+        "ParseError": {
+            "description": "When a mask can't be parsed"
+        },
+        "MaskError": {
+            "description": "When any error occurs on mask"
+        }
+    }
+}
