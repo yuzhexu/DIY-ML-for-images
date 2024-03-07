@@ -9,7 +9,7 @@ def create_app():
     from .resources.project_resources import ns as project_ns
     api.add_namespace(project_ns)
 
-    # 如果有其他命名空间，继续在这里添加
+    
 
     return app
 
