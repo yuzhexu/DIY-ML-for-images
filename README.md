@@ -17,4 +17,4 @@ A project is associated with a user
 <img width="646" alt="截屏2024-03-06 下午7 13 07" src="https://github.com/yuzhexu/DIY-ML-for-images/assets/112592362/e7b77182-2220-451a-b327-9dff063a598d">
 
 # database schema
-![5211ea1b-c224-443d-b430-91ab3dace538](https://github.com/yuzhexu/DIY-ML-for-images/assets/112592362/8f42dd8f-d54a-470c-b337-6b8e784edfbd)
+![98405cae-dc70-48df-8a20-5f3d7e25e262](https://github.com/yuzhexu/DIY-ML-for-images/assets/112592362/74d3d200-6657-401f-879e-2ba1f9e49f9f)
