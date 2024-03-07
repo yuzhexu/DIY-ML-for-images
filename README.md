@@ -12,3 +12,6 @@ API user should be able to run and track iterations of training\
 API user should be able to use inference API to run and get results on an image\
 ALL APIs should be independent of the ML model and data\
 A project is associated with a user
+
+# Models
+<img width="646" alt="截屏2024-03-06 下午7 13 07" src="https://github.com/yuzhexu/DIY-ML-for-images/assets/112592362/e7b77182-2220-451a-b327-9dff063a598d">
