@@ -14,6 +14,8 @@ ALL APIs should be independent of the ML model and data\
 A project is associated with a user
 
 # Models
+check swagger under /app/schema/api swagger
+
 <img width="646" alt="截屏2024-03-06 下午7 13 07" src="https://github.com/yuzhexu/DIY-ML-for-images/assets/112592362/e7b77182-2220-451a-b327-9dff063a598d">
 
 # database schema
