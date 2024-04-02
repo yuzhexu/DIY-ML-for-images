@@ -1,6 +1,16 @@
-from flask import request
+from flask import jsonify, request
 from flask_restx import Namespace, Resource, fields, reqparse
 from werkzeug.datastructures import FileStorage
+from redis import Redis
+from rq import Queue
+from app.models.inference import perform_inference  
+from app.models.train import train_model  
+
+# initial redis connection 
+redis_conn = Redis(host='localhost', port=6379, db=0)
+# queues
+training_queue = Queue('training_tasks', connection=redis_conn)
+inference_queue = Queue('inference_tasks', connection=redis_conn)
 
 ns = Namespace('projects', description='Project operations')
 
@@ -49,9 +59,17 @@ class TrainingConfigure(Resource):
         # Implement training parameter configuration logic
         return {'success': True, 'message': 'Training configured successfully'}, 200
 
-@ns.route('/<int:projectId>/training/start')
-class TrainingStart(Resource):
-    @ns.doc(description='Initiates the training process for a machine learning model with the previously configured parameters.')
-    def post(self, projectId):
-        # Implementing the logic to start training
-        return {'success': True, 'message': 'Training started successfully', 'data': {'trainingId': 'unique_training_id'}}, 200
+
+@ns.route('/<int:projectId>/submit_inference', methods=['POST'])
+class submit_inference(Resource):
+    def post(self):
+       data = request.get_json()
+       job = inference_queue.enqueue(perform_inference, data)
+       return jsonify({'job_id': job.id}), 202
+
+@ns.route('/<int:projectId>/submit_training', methods=['POST'])
+class submit_training(Resource):
+    def post(self):
+        data = request.get_json()
+        job = training_queue.enqueue(train_model, data)
+        return jsonify({'job_id': job.id}), 202
