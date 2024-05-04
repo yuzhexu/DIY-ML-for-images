@@ -19,12 +19,12 @@ This project showcases the following features:
 3. `cd` into the repo, create and activate a virtual environment, and run `python3 -m pip install -r requirements.txt`
 4. Start the actual API-serving Flask app with `python3 run.py`
 5. Start a (or maore) Redis worker(s) with `python3 worker.py`
-6. See <a herf =https://app.swaggerhub.com/apis/YuzheXu/DIY_ML_api/1.0> API documentation</a>for usage.
+6. See <a herf =https://app.swaggerhub.com/apis/YuzheXu/DIY_ML_api/1.0 target="_blank"> API documentation</a>for usage.
 ### install and run by docker
 1. Simply pull the image from docker `docker pull yuzhexu/flask_app:1.0.0`
 2. if pulled image, run `docker run -p 5000:5000 yuzhexu/flask_app:1.0.0`
 3. if clone from github, run `docker compose up --build`, no need `--build` if already have image
-4. See <a herf =https://app.swaggerhub.com/apis/YuzheXu/DIY_ML_api/1.0> API documentation</a>for usage.
+4. See <a herf =https://app.swaggerhub.com/apis/YuzheXu/DIY_ML_api/1.0 target="_blank"> API documentation</a>for usage.
 # Demos
 - Task Queue Implementation
 
