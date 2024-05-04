@@ -26,6 +26,10 @@ This project showcases the following features:
 3. if clone from github, run `docker compose up --build`, no need `--build` if already have image
 4. See <a href =https://app.swaggerhub.com/apis/YuzheXu/DIY_ML_api/1.0 target="_blank"> API documentation</a>for usage.
 # Demos
+- Video Demo
+[![Watch the video](https://github.com/yuzhexu/DIY-ML-for-images/assets/112592362/4ce2c3d8-b2ef-4033-bea9-7bb6c3ece2b7)](https://youtu.be/QIufAvnQFu4)
+
+
 - Task Queue Implementation
 
 ![截屏2024-05-04 下午4 57 53](https://github.com/yuzhexu/DIY-ML-for-images/assets/112592362/581432ca-a2e7-4227-b7b8-4f3089252405)
