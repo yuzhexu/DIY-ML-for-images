@@ -9,14 +9,12 @@ import os
 from .models.user import db, User  # Import db and User model
 from flask_login import LoginManager
 from flask_cors import CORS
-from flask_swagger import swagger
 
 
 
 def create_app():
     app = Flask(__name__,template_folder='../frontend')
     CORS(app)
-    swagger = swagger(app)  
     app.config['SECRET_KEY'] = '9898943'
     app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'postgresql://postgres:9898943@localhost:5432/ec530')
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
