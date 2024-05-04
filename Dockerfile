@@ -1,6 +1,14 @@
-FROM python:3.8-slim-buster
-WORKDIR /DIY-ML-for-images
-COPY requirements.txt requirements.txt
-RUN pip3 install -r requirements.txt
+FROM python:3.12
+
+WORKDIR /app
+
+COPY requirements.txt ./
+RUN pip install --no-cache-dir -r requirements.txt
+
 COPY . .
-CMD [ "python3", "-m" , "flask", "run", "--host=0.0.0.0"]
+
+EXPOSE 5000
+
+ENV NAME World
+CMD python3 run.py & python3 worker.py & wait
+

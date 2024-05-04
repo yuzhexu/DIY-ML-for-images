@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Register - DIY ML</title>
+</head>
+<body>
+    <h2>User Registration</h2>
+    <form id="registrationForm">
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" required>
+        
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required>
+        
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required>
+        
+        <button type="button" onclick="registerUser()">Register</button>
+    </form>
+    <p id="registrationStatus"></p>
+    <p>Already have account <a href="{{ url_for('user_login') }}">login</a></p>
+
+    <script>
+        function registerUser() {
+    var username = document.getElementById('username').value;
+    var email = document.getElementById('email').value;
+    var password = document.getElementById('password').value;
+    var data = JSON.stringify({ username: username, email: email, password: password });
+
+    fetch('/api/register', {
+        method: 'POST',
+        headers: {
+                'Content-Type': 'application/json'
+                 },
+        body: data,
+    })
+    .then(response => response.json())
+    .then(data => {
+        document.getElementById('registrationStatus').innerText = 'Registration successful. Please log in.';
+        window.location.href = '/api/login'; // Redirect to the login page
+    })
+    .catch(error => {
+        document.getElementById('registrationStatus').innerText = 'Registration failed: ' + error.message;
+    });
+}
+
+    </script>
+</body>
+</html>

@@ -1,8 +1,11 @@
 from rq import Worker, Queue, Connection
 from redis import Redis
+import os
+
+redis_url = os.getenv('REDIS_URL', 'redis://localhost:6379')  # 使用 REDIS_URL 环境变量
+redis_conn = Redis.from_url(redis_url)
 
 # connect to redis
-redis_conn = Redis(host='localhost', port=6379, db=0)
 queue_names = ['training', 'inference']  # identify queues name
 
 if __name__ == '__main__':

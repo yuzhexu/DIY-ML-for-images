@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>DIY ML</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-blue-50 font-sans text-gray-700">
+
+    <header class="bg-gradient-to-r from-blue-500 to-purple-500 text-white text-center p-4 text-xl">
+        DIY Machine Learning Platform
+        <button class="float-right mt-[-8px] bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded" onclick="logoutUser()">Logout</button>
+    </header>
+
+    <main class="p-5">
+        <h2 class="text-gray-600 border-b-2 border-blue-500 pb-2">Upload Your dataset to train your model</h2>
+        <form id="uploadForm" action="/upload" method="post" enctype="multipart/form-data" class="bg-white p-5 rounded shadow-md mb-5 flex flex-col gap-3">
+            <input type="file" name="file" class="form-input mt-1 block w-full">
+            <input type="submit" value="Upload" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded cursor-pointer">
+        </form>
+
+        <h2 class="text-gray-600 border-b-2 border-blue-500 pb-2">Model Training Configuration</h2>
+        <form id="trainingForm" class="bg-white p-5 rounded shadow-md mb-5 flex flex-col gap-3">
+            <label for="modelName" class="font-bold mb-1">Model Name:</label>
+            <input type="text" id="modelName" name="modelName" required class="form-input mt-1 block w-full">
+
+            <label for="learningRate" class="font-bold mb-1">Learning Rate:</label>
+            <select id="learningRate" name="learningRate" class="form-select mt-1 block w-full">
+                <option value="0.01">0.01</option>
+                <option value="0.001">0.001</option>
+                <option value="0.0001">0.0001</option>
+            </select>
+
+            <label for="epochs" class="font-bold mb-1">Epochs:</label>
+            <select id="epochs" name="epochs" class="form-select mt-1 block w-full">
+                <option value="10">10</option>
+                <option value="20">20</option>
+                <option value="30">30</option>
+            </select>
+
+            <input type="button" value="Start Training" onclick="startTraining()" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded cursor-pointer">
+        </form>
+        <p id="trainingStatus" class="mb-4"></p>
+
+        <h2 class="text-gray-600 border-b-2 border-blue-500 pb-2">Submit Image for Inference</h2>
+        <form id="inferenceForm" enctype="multipart/form-data" class="bg-white p-5 rounded shadow-md flex flex-col gap-3">
+            <input type="file" name="file" required class="form-input mt-1 block w-full">
+            
+            <label for="modelSelect" class="font-bold mb-1">Choose a model:</label>
+            <select id="modelSelect" name="model" class="form-select mt-1 block w-full"></select>
+            
+            <input type="button" value="Classify Image" onclick="submitInference()" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded cursor-pointer">
+        </form>
+        <p id="inferenceResult" class="mb-4"></p>
+    </main>
+
+    <footer class="text-center p-4 bg-gray-200 w-full left-0 bottom-0">
+        &copy; EC530@BUECE DIY ML. All rights reserved.
+    </footer>
+
+    <script>
+        function startTraining() {
+            var modelName = document.getElementById('modelName').value;
+            if (modelName) {
+                document.getElementById('trainingStatus').innerText = 'Training in progress...';
+                
+                // Simulate training process
+                setTimeout(function() {
+                    const learningRate = document.getElementById('learningRate').value;
+                    const epochs = document.getElementById('epochs').value;
+                    
+                    let trainingResult = `Training Complete!\nModel Name: ${modelName}\nLearning Rate: ${learningRate}\nEpochs: ${epochs}`;
+                    document.getElementById('trainingStatus').innerText = trainingResult;
+                    
+                    // Add the model name to the inference dropdown
+                    var select = document.getElementById('modelSelect');
+                    var option = document.createElement('option');
+                    option.value = modelName;
+                    option.text = modelName;
+                    select.appendChild(option);
+
+                }, 3000); // Assume training needs 3 seconds
+            } else {
+                alert("Please enter a model name before starting training.");
+            }
+        }
+
+        function submitInference() {
+            var form = document.getElementById('inferenceForm');
+            var data = new FormData(form);
+            fetch('/api/submit_inference', {
+                method: 'POST',
+                body: data,
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Success:', data);
+                document.getElementById('inferenceResult').innerText = 'Inference result: ' + data.label;
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                document.getElementById('inferenceResult').innerText = 'Inference failed: ' + error.message;
+            });
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            var uploadForm = document.getElementById('uploadForm');
+            uploadForm.onsubmit = function(event) {
+                event.preventDefault(); // Prevent default form submission
+
+                var data = new FormData(uploadForm);
+                fetch('/api/uploadDateset', {
+                    method: 'POST',
+                    body: data,
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Success:', data);
+                    alert('File uploaded successfully');
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                    alert('Upload failed');
+                });
+            };
+        });
+
+        function logoutUser() {
+            fetch('/api/logout', {
+                method: 'POST',
+            })
+            .then(response => {
+                if (response.ok) {
+                    // 注销成功后，可能想要重定向到登录页面
+                    window.location.href = '/api/login';
+                } else {
+                    alert('Logout failed');
+                }
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                alert('Logout failed');
+            });
+        }
+
+    </script>
+
+</body>
+</html>
+
+

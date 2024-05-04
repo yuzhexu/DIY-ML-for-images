@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login - DIY ML</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css">
+ <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+</head>
+<body style="background-color:#ccc;">
+    <div class="login-box" >
+    <div class="login-header">Login</div>
+    <div class="login-body">
+    <p>Please enter your username and password</p>
+    <form class="form-group" id="loginForm">
+        <label for="username">Username:</label>
+        <input type="text" class="form-control" placeholder="Username" id="username" name="username" required>
+        
+        <label for="password">Password:</label>
+        <input type="password" class="form-control" placeholder="Password" id="password" name="password" required>
+        
+        <button type="button" onclick="loginUser()">Login</button>
+    </form>
+    
+    <p>No account <a href="{{ url_for('projects_user_register') }}">Register</a></p>
+
+    <p id="loginStatus"></p>
+</div>
+    </div>
+    <script>
+        function loginUser() {
+            var username = document.getElementById('username').value;
+            var password = document.getElementById('password').value;
+            if (!username || !password) {
+            document.getElementById('loginStatus').innerText = 'Username and password are required';
+            return;
+            }
+            var data = JSON.stringify({ username: username, password: password });
+
+            //console.log("Sending data:", data);  // Debugging line
+            fetch('/api/login', {
+                method: 'POST',
+                headers: {
+                        'Content-Type': 'application/json'
+                         },
+                body: data,  // Send as FormData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.redirect) {
+                    window.location.href = data.redirect; // Use the redirect path sent from the server
+                } else {
+                    document.getElementById('loginStatus').innerText = data.error || 'Login failed';
+                }
+            })
+            .catch(error => {
+                
+                document.getElementById('loginStatus').innerText = 'Login failed: ' + error.message;
+            });
+        }
+    </script>
+</body>
+</html>
+

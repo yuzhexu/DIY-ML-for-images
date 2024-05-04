@@ -1,0 +1,43 @@
+version: '3.12'
+services:
+  flask_app:
+    container_name: flask_app
+    image: yuzhexu/flask_app:1.0.0
+    build: .
+    ports:
+      - "5000:5000"
+    depends_on:
+      - db
+      - cache
+    environment:
+      - DATABASE_URL=postgresql://postgres:9898943@db:5432/ec530
+      - REDIS_URL=redis://cache:6379  
+  worker:
+    container_name: flask_worker
+    build: .
+    command: python3 worker.py
+    depends_on:
+      - cache
+    environment:
+      - REDIS_URL=redis://cache:6379  
+  db:
+    container_name: flask_database
+    image: postgres:16
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_DB: ec530
+      POSTGRES_PASSWORD: 98943
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+  cache:
+    container_name: redis_cache
+    image: redis
+    volumes:
+      - redis_data:/data
+
+volumes:
+  postgres_data: {}
+  redis_data: {}
