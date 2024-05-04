@@ -1,42 +1,59 @@
+# tests/conftest.py
+import json
 import pytest
-from app import create_app  # Ensure this import is correct
-from app.models.inference import perform_inference
-from app.models.train import train_model
+from app import create_app, db
 
-# Assuming a fixture for creating a test client exists, or define it as follows:
-@pytest.fixture
-def client():
-    app = create_app()
-    app.config['TESTING'] = True
-    with app.test_client() as client:
-        yield client
+@pytest.fixture(scope='module')
+def test_client():
+    flask_app = create_app()
+    flask_app.config.update({
+        'TESTING': True,
+        'SQLALCHEMY_DATABASE_URI': 'sqlite:///:memory:'
+    })
 
-    # Using patch to emulate the enqueue method
-def test_submit_inference(mocker,client):
-    # Emulating the enqueue method
-    mock_enqueue = mocker.patch('app.resources.project_resources.inference_queue.enqueue', return_value=type('Job', (object,), {'id': 'fake_job_id'})())
+    testing_client = flask_app.test_client()
 
-    projectId = 123  # Example project ID
-    # Send a POST request to the submit_inference endpoint
-    response = client.post(f"/{projectId}/submit_inference", json={"data": "inference data"})
-    
-    # Confirms that the request was processed correctly and returns the job_id
-    assert response.status_code == 202
-    assert response.json == {'job_id': 'fake_job_id'}
-    
-    # Verify that enqueue is called correctly 
-    mock_enqueue.assert_called_once_with(perform_inference, {"data": "inference data"})
+    ctx = flask_app.app_context()
+    ctx.push()
 
-def test_submit_training(mocker, client):
-        # Similar adjustments for the training submission test
-    mock_enqueue = mocker.patch('app.resources.project_resources.training_queue.enqueue', return_value=type('Job', (object,), {'id': 'fake_job_id'})())
-        
-    projectId = 123  # Example project ID
-        # Send a POST request to the submit_training endpoint
-    response = client.post(f"/{projectId}/submit_training", json={"data": "training data"})
-        
-        # Confirm response status and job_id as before
-    assert response.status_code == 202
-    assert response.json == {'job_id': 'fake_job_id'}
-        
-    mock_enqueue.assert_called_once_with(train_model, {"data": "training data"})
+    db.create_all()  # create table
+
+    yield testing_client  
+
+    db.session.remove()
+    db.drop_all()
+    ctx.pop()
+
+# tests/test_auth.py
+def test_registration(test_client):
+    """test register"""
+    response = test_client.post('/api/register', data=json.dumps({
+        'username': 'testuser',
+        'password': 'testpassword',
+        'email': 'abc@gmail.com'
+    }), content_type='application/json')
+    assert response.status_code == 201
+
+def test_login_and_logout_flow(test_client):
+    # login
+    login_response = test_client.post('/api/login', data=json.dumps({
+        'username': 'testuser',
+        'password': 'testpassword'
+    }), content_type='application/json')
+    assert login_response.status_code == 200
+
+    # go index
+    index_response = test_client.get('/api/index')
+    assert index_response.status_code == 200
+
+    # logout
+    logout_response = test_client.post('/api/logout', follow_redirects=True)
+    assert logout_response.status_code == 200
+    assert 'api/login' in logout_response.json['redirect'], "Should redirect to the login page"
+
+
+#test unauthorized_access after logout
+def test_unauthorized_access_redirects_to_login(test_client):
+    """test unauthorized access"""
+    response = test_client.get('/api/index', follow_redirects=True)
+    assert b"Login" in response.data  
