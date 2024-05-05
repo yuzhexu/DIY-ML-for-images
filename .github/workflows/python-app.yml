@@ -53,6 +53,6 @@ jobs:
     - name: Set PYTHONPATH
       run: echo "PYTHONPATH=$PYTHONPATH:$(pwd)" >> $GITHUB_ENV
     - name: Run tests
-        run: python -m pytest tests
+        run: pytest tests
         env:
           DATABASE_URL: "postgresql://postgres:9898943@localhost:5432/ec530"
